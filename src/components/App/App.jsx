@@ -7,32 +7,57 @@ class App extends Component {
   state = {
     contacts: [],
     name: '',
+    number: '',
+    filter: '',
   };
 
   INITIAL_FORM_STATE = {
     name: '',
+    number: '',
+  };
+
+  RANDOM_PHONEBOOK_DATA = {
+    contacts: [
+    {id: nanoid(), name: 'Rosie Simpson', number: '459-12-56'},
+    {id: nanoid(), name: 'Hermione Kline', number: '443-89-12'},
+    {id: nanoid(), name: 'Eden Clements', number: '645-17-79'},
+    {id: nanoid(), name: 'Annie Copeland', number: '227-91-26'},
+  ]
   }
 
   handleFormSubmit = e => {
     e.preventDefault();
-    // const {name} = this.state.name;
-    this.setState((currentState) => {
-      this.state.contacts = [
-        ...currentState.contacts,
-        {
-          id: nanoid(),
-          name: currentState.name,
-        },
-      ];
-      console.log(this.state.contacts);
+    this.setState(currentState => {
+      return {
+        contacts: [
+          ...currentState.contacts,
+          {
+            id: nanoid(),
+            name: currentState.name,
+            number: currentState.number,
+          },
+        ],
+      };
     });
     this.resetForm();
   };
 
-  resetForm = () => {
-    // console.log('clearing form: ', this.INITIAL_FORM_STATE);
-    this.setState({name:''});
+  handleFillPhonebook = e => {
+    e.preventDefault();
+    this.setState(currentState => {
+      return {
+        contacts: [
+          ...currentState.contacts,
+          ...this.RANDOM_PHONEBOOK_DATA.contacts,
+        ],
+      };
+    });
+
   }
+
+  resetForm = () => {
+    this.setState({ ...this.INITIAL_FORM_STATE });
+  };
 
   onChange = e => {
     const { name, value } = e.target;
@@ -42,17 +67,42 @@ class App extends Component {
   render() {
     return (
       <Container>
-        <form onSubmit={this.handleFormSubmit} onChange={this.onChange}>
+        <form onSubmit={this.handleFormSubmit}>
           <input
             type="text"
             name="name"
-            value={this.name}
+            value={this.state.name}
+            onChange={this.onChange}
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
           />
+          <input
+            type="tel"
+            name="number"
+            value={this.state.number}
+            onChange={this.onChange}
+            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+            required
+          />
           <button type="submit">Add contact</button>
         </form>
+        <button type="submit" onClick={this.handleFillPhonebook}>Fill phonebook</button>
+        <input
+          type="text"
+          name="filter"
+          value={this.state.filter}
+          onChange={this.onChange}
+        />
+        <h2>Contacts</h2>
+        <ul>
+          {this.state.contacts.map(contact => (
+            <li key={contact.id}>
+              {contact.name}: {contact.number}
+            </li>
+          ))}
+        </ul>
       </Container>
     );
   }
