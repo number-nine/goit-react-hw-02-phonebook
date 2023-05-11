@@ -2,13 +2,15 @@ import { Component } from 'react';
 import { nanoid } from 'nanoid';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
+import Form from 'components/Form'
+
 import { Container } from 'components/App/App.styled';
 
 class App extends Component {
   state = {
     contacts: [],
-    name: '',
-    number: '',
+    // name: '',
+    // number: '',
     filter: '',
   };
 
@@ -17,44 +19,41 @@ class App extends Component {
     number: '',
   };
 
-  RANDOM_PHONEBOOK_DATA = {
-    contacts: [
-      { id: nanoid(), name: 'Rosie Simpson', number: '459-12-56' },
-      { id: nanoid(), name: 'Hermione Kline', number: '443-89-12' },
-      { id: nanoid(), name: 'Eden Clements', number: '645-17-79' },
-      { id: nanoid(), name: 'Annie Copeland', number: '227-91-26' },
-    ],
-  };
+  RANDOM_PHONEBOOK_DATA = [
+    { id: nanoid(), name: 'Rosie Simpson', number: '459-12-56' },
+    { id: nanoid(), name: 'Hermione Kline', number: '443-89-12' },
+    { id: nanoid(), name: 'Eden Clements', number: '645-17-79' },
+    { id: nanoid(), name: 'Annie Copeland', number: '227-91-26' },
+  ];
 
-  handleFormSubmit = e => {
-    e.preventDefault();
-    if (this.isNameUniq(this.state.name)) {
-      this.setState(currentState => {
+  addContact = ({name, number}) => {
+    // e.preventDefault();
+    // const newName = this.state.name;
+    if (this.isNameUniq(name)) {
+      this.setState(({contacts}) => {
         return {
           contacts: [
-            ...currentState.contacts,
+            ...contacts,
             {
               id: nanoid(),
-              name: currentState.name,
-              number: currentState.number,
+              name: name,
+              number: number,
             },
           ],
         };
       });
-      this.resetForm();
+      // this.resetForm();
     } else {
-      Notify.failure(`${this.state.name} is already in contacts.`);
-      // console.log();
+      Notify.failure(`${name} is already in contacts.`);
     }
   };
 
   handleFillPhonebook = e => {
-    e.preventDefault();
-    this.setState(currentState => {
+    this.setState(({contacts}) => {
       return {
         contacts: [
-          ...currentState.contacts,
-          ...this.RANDOM_PHONEBOOK_DATA.contacts,
+          ...contacts,
+          ...this.RANDOM_PHONEBOOK_DATA,
         ],
       };
     });
@@ -74,21 +73,17 @@ class App extends Component {
     this.setState({ [name]: value });
   };
 
-  handleDeleteContact = (e) => {
-    e.preventDefault();
-    // console.dir(currentState.contacts);
-    this.setState(currentState => 
-    {console.log(currentState.contacts);
-      return currentState.contacts
-        .filter((contact) =>
-          (contact.id !== e.currentTarget.id))}
-    );
-  }
+  handleDeleteContact = idToRemove => {
+    this.setState(({ contacts }) => ({
+      contacts: contacts.filter(({ id }) => id !== idToRemove),
+    }));
+  };
 
   render() {
     return (
       <Container>
-        <form onSubmit={this.handleFormSubmit}>
+        <Form onSubmit={this.addContact} />
+        {/* <form onSubmit={this.handleFormSubmit}>
           <input
             type="text"
             name="name"
@@ -108,8 +103,8 @@ class App extends Component {
             required
           />
           <button type="submit">Add contact</button>
-        </form>
-        <button type="submit" onClick={this.handleFillPhonebook}>
+        </form> */}
+        <button type="button" onClick={this.handleFillPhonebook}>
           Fill phonebook
         </button>
         <input
@@ -132,8 +127,7 @@ class App extends Component {
                   {contact.name}: {contact.number}
                   <button
                     type="button"
-                    id={contact.id}
-                    onClick={this.handleDeleteContact}
+                    onClick={() => this.handleDeleteContact(contact.id)}
                   >
                     Delete
                   </button>
