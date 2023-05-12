@@ -1,9 +1,14 @@
 import { Component } from 'react';
 // import { nanoid } from 'nanoid';
-// import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-class Form extends Component {
+class ContactEditor extends Component {
   state = {
+    name: '',
+    number: '',
+  };
+
+  INITIAL_FORM_STATE = {
     name: '',
     number: '',
   };
@@ -11,13 +16,22 @@ class Form extends Component {
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
-    };
-    
-    handleSubmit = e => {
-        e.preventDefault();
-        // const { name, number } = this.state;
-        this.props.onSubmit(this.state);
-    }
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props
+      .onSubmit(this.state)
+      .then(result => {
+        Notify.success(result);
+        this.resetForm();
+      })
+      .catch(({message}) => Notify.failure(message));
+  };
+
+  resetForm = () => {
+    this.setState({ ...this.INITIAL_FORM_STATE });
+  };
 
   render() {
     return (
@@ -46,5 +60,4 @@ class Form extends Component {
   }
 }
 
-
-export default Form;
+export default ContactEditor;
