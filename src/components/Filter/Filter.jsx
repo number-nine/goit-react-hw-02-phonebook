@@ -1,11 +1,14 @@
+import { FilterWrapper } from './Filter.styled'
+import { Button } from '../common.styled';
+
 const Filter = ({ filter, onChange, onReset }) => {
   return (
-    <section>
+    <FilterWrapper>
       <input type="text" name="filter" value={filter} onChange={onChange} />
-      <button type="button" onClick={onReset}>
+      <Button type="button" onClick={onReset}>
         Clear field
-      </button>
-    </section>
+      </Button>
+    </FilterWrapper>
   );
 };
 

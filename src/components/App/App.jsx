@@ -5,23 +5,18 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import ContactEditor from 'components/ContactEditor';
 import Filter from 'components/Filter';
 import ContactsList from 'components/ContactsList';
+import Section from 'components/Section';
 
-import getUsers from '../../controllers/request-controller'
+import getUsers from '../../controllers/data-controller';
 
 import { Container } from 'components/App/App.styled';
+import { Button } from 'components/common.styled';
 
 class App extends Component {
   state = {
     contacts: [],
     filter: '',
   };
-
-  RANDOM_PHONEBOOK_DATA = [
-    { name: 'Rosie Simpson', number: '459-12-56' },
-    { name: 'Hermione Kline', number: '443-89-12' },
-    { name: 'Eden Clements', number: '645-17-79' },
-    { name: 'Annie Copeland', number: '227-91-26' },
-  ];
 
   addContact = ({ name, number }) => {
     return new Promise((resolve, reject) => {
@@ -46,13 +41,15 @@ class App extends Component {
   };
 
   handleFillPhonebook = () =>
-    this.RANDOM_PHONEBOOK_DATA.forEach(contact => {
-      this.addContact(contact)
-        .then(result => Notify.success(result))
-        .catch(({ message }) => {
-          Notify.failure(message);
-        });
-    });
+    getUsers().then(result =>
+      result.forEach(contact => {
+        this.addContact(contact)
+          .then(result => Notify.success(result))
+          .catch(({ message }) => {
+            Notify.failure(message);
+          });
+      })
+    );
 
   isNameUniq = nameToAdd =>
     !this.state.contacts
@@ -72,7 +69,7 @@ class App extends Component {
   };
 
   handleResetFilter = () => {
-    this.setState({ filter: ''});
+    this.setState({ filter: '' });
   };
 
   filterContacts = (contacts, filter) => {
@@ -87,21 +84,28 @@ class App extends Component {
   render() {
     return (
       <Container>
-        <ContactEditor onSubmit={this.addContact} />
-        <button type="button" onClick={this.handleFillPhonebook}>
-          Fill phonebook
-        </button>
+       
+        <Button type="button" onClick={this.handleFillPhonebook}>
+          Randomise Data
+        </Button>
+        
+        <Section title="Add Contact"> 
+          <ContactEditor onSubmit={this.addContact} />
+          </Section>
+        
+        <Section title="Filter by Name"> 
         <Filter
           filter={this.state.filter}
           onChange={this.onChange}
           onReset={this.handleResetFilter}
-        />
+          />
+        </Section>
+        <Section title="Contacts List"> 
         <ContactsList
-          title="Contacts"
           contacts={this.filterContacts(this.state.contacts, this.state.filter)}
           onClick={this.handleDeleteContact}
-        />
-        <button type="button" onClick={getUsers}>get users</button>
+          />
+          </Section>
       </Container>
     );
   }
