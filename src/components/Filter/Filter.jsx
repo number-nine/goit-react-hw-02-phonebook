@@ -1,4 +1,5 @@
-import { FilterWrapper } from './Filter.styled'
+import PropTypes from 'prop-types';
+import { FilterWrapper } from './Filter.styled';
 import { Button } from '../common.styled';
 
 const Filter = ({ filter, onChange, onReset }) => {
@@ -10,6 +11,12 @@ const Filter = ({ filter, onChange, onReset }) => {
       </Button>
     </FilterWrapper>
   );
+};
+
+Filter.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
+  filter: PropTypes.string.isRequired,
 };
 
 export default Filter;

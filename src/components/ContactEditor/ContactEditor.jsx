@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -31,7 +32,7 @@ class ContactEditor extends Component {
         Notify.success(result);
         this.resetForm();
       })
-      .catch(({message}) => Notify.failure(message));
+      .catch(({ message }) => Notify.failure(message));
   };
 
   resetForm = () => {
@@ -72,6 +73,10 @@ class ContactEditor extends Component {
       </FormContainer>
     );
   }
+}
+
+ContactEditor.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default ContactEditor;

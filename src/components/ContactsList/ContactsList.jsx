@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { ListWrapper } from './ContactsList.styled';
 import { Button } from '../common.styled';
 
@@ -18,6 +19,15 @@ const ContactsList = ({ contacts, onClick }) => {
       })}
     </ListWrapper>
   );
+};
+
+ContactsList.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  contacts: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired).isRequired
 };
 
 export default ContactsList;
